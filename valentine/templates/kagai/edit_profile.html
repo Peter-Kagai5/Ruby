@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Kagai{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="fw-bold mb-4">
+                <i class="fas fa-edit"></i> Edit Profile
+            </h1>
+
+            <form method="POST" enctype="multipart/form-data" class="needs-validation">
+                {% csrf_token %}
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="card-title mb-0 fw-bold">Personal Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label fw-bold">First Name</label>
+                                <input type="text" class="form-control" id="first_name" 
+                                       name="first_name" value="{{ user.first_name }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label fw-bold">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" 
+                                       name="last_name" value="{{ user.last_name }}">
+                            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label fw-bold">Email</label>
+                                <input type="email" class="form-control" id="email" 
+                                       name="email" value="{{ user.email }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="card-title mb-0 fw-bold">Profile Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="bio" class="form-label fw-bold">Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                          placeholder="Tell about yourself...">{{ profile.bio }}</textarea>
+                                <small class="text-muted">Maximum 500 characters</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="location" class="form-label fw-bold">Location</label>
+                                <input type="text" class="form-control" id="location" 
+                                       name="location" value="{{ profile.location }}" placeholder="City, Country">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="gender" class="form-label fw-bold">Gender</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="">Select...</option>
+                                    <option value="M" {% if profile.gender == 'M' %}selected{% endif %}>Male</option>
+                                    <option value="F" {% if profile.gender == 'F' %}selected{% endif %}>Female</option>
+                                    <option value="O" {% if profile.gender == 'O' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label fw-bold">Phone</label>
+                                <input type="tel" class="form-control" id="phone" 
+                                       name="phone" value="{{ profile.phone }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="website" class="form-label fw-bold">Website</label>
+                                <input type="url" class="form-control" id="website" 
+                                       name="website" value="{{ profile.website }}" placeholder="https://example.com">
+                            </div>
+                            <div class="col-12">
+                                <label for="interests" class="form-label fw-bold">Interests</label>
+                                <input type="text" class="form-control" id="interests" 
+                                       name="interests" value="{{ profile.interests }}" 
+                                       placeholder="Separate with commas (e.g., Travel, Reading, Music)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="card-title mb-0 fw-bold">Avatar</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if profile.avatar %}
+                            <div class="mb-3 text-center">
+                                <img src="{{ profile.avatar.url }}" alt="Current Avatar" class="img-fluid rounded-circle" style="max-width: 150px;">
+                            </div>
+                        {% endif %}
+                        <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+                        <small class="text-muted">PNG, JPG, or GIF. Max 5MB</small>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger btn-lg flex-grow-1">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{% url 'kagai:profile' user.username %}" class="btn btn-outline-secondary btn-lg flex-grow-1">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

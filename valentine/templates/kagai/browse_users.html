@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Browse Users - Kagai{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="fw-bold mb-4">
+        <i class="fas fa-users"></i> Browse Users
+    </h1>
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="q" placeholder="Search by username or name..." 
+                           value="{{ query }}">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="gender">
+                        <option value="">All Genders</option>
+                        <option value="M" {% if gender == 'M' %}selected{% endif %}>Male</option>
+                        <option value="F" {% if gender == 'F' %}selected{% endif %}>Female</option>
+                        <option value="O" {% if gender == 'O' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="sort">
+                        <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Newest</option>
+                        <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>Oldest</option>
+                        <option value="username" {% if sort == 'username' %}selected{% endif %}>A-Z</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Grid -->
+    {% if users %}
+        <div class="row g-4">
+            {% for user_obj in users %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card user-card h-100 shadow-sm">
+                        <div class="card-header bg-light border-0 text-center">
+                            {% if user_obj.profile.avatar %}
+                                <img src="{{ user_obj.profile.avatar.url }}" alt="{{ user_obj.username }}" 
+                                     class="img-fluid rounded-circle avatar-md">
+                            {% else %}
+                                <div class="avatar-placeholder rounded-circle">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">
+                                {{ user_obj.first_name|default:user_obj.username }}
+                            </h5>
+                            <p class="text-muted small mb-2">@{{ user_obj.username }}</p>
+
+                            {% if user_obj.profile.location %}
+                                <p class="text-muted small">
+                                    <i class="fas fa-map-marker-alt"></i> {{ user_obj.profile.location }}
+                                </p>
+                            {% endif %}
+
+                            {% if user_obj.profile.bio %}
+                                <p class="card-text small text-muted">
+                                    {{ user_obj.profile.bio|truncatewords:15 }}
+                                </p>
+                            {% endif %}
+
+                            {% if user_obj.profile.interests %}
+                                <div class="mb-3">
+                                    {% for interest in user_obj.profile.interests|split:","|slice:":3" %}
+                                        <span class="badge bg-danger">{{ interest|strip }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'kagai:profile' user_obj.username %}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> View Profile
+                                </a>
+                                <a href="{% url 'kagai:send_note' user_obj.username %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-heart"></i> Send Note
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center py-5">
+            <h5><i class="fas fa-search"></i> No users found</h5>
+            <p>Try adjusting your search filters or check back later!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

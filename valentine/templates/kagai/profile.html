@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }}'s Profile - Kagai{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Profile Header -->
+    <div class="row mb-5">
+        <div class="col-md-3 text-center">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="{{ profile_user.username }}" class="img-fluid rounded-circle avatar-lg mb-3">
+            {% else %}
+                <div class="avatar-placeholder rounded-circle mx-auto mb-3">
+                    <i class="fas fa-user"></i>
+                </div>
+            {% endif %}
+            
+            {% if request.user != profile_user %}
+                <div class="d-grid gap-2">
+                    <a href="{% url 'kagai:send_note' profile_user.username %}" class="btn btn-danger">
+                        <i class="fas fa-heart"></i> Send Love Note
+                    </a>
+                    {% if connection %}
+                        {% if connection.status == 'accepted' %}
+                            <span class="badge bg-success"><i class="fas fa-check"></i> Connected</span>
+                            <a href="{% url 'kagai:remove_connection' connection.id %}" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-times"></i> Remove Connection
+                            </a>
+                        {% elif connection.status == 'pending' %}
+                            {% if request.user == connection.user1 %}
+                                <span class="badge bg-info"><i class="fas fa-clock"></i> Request Pending</span>
+                            {% else %}
+                                <a href="{% url 'kagai:accept_connection' connection.id %}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Accept
+                                </a>
+                                <a href="{% url 'kagai:reject_connection' connection.id %}" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-times"></i> Reject
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'kagai:send_connection_request' profile_user.username %}" class="btn btn-outline-danger">
+                            <i class="fas fa-user-plus"></i> Connect
+                        </a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <a href="{% url 'kagai:edit_profile' %}" class="btn btn-danger w-100">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="col-md-9">
+            <h2 class="fw-bold mb-1">{{ profile_user.first_name|default:profile_user.username }}</h2>
+            <p class="text-muted mb-3">@{{ profile_user.username }}</p>
+
+            {% if profile.bio %}
+                <p class="lead mb-3">{{ profile.bio }}</p>
+            {% endif %}
+
+            <!-- Profile Details -->
+            <div class="row g-3">
+                {% if profile.location %}
+                    <div class="col-md-4">
+                        <small class="text-muted d-block"><i class="fas fa-map-marker-alt"></i> Location</small>
+                        <p>{{ profile.location }}</p>
+                    </div>
+                {% endif %}
+
+                {% if profile.interests %}
+                    <div class="col-md-4">
+                        <small class="text-muted d-block"><i class="fas fa-star"></i> Interests</small>
+                        <div>
+                            {% for interest in profile.interests|split:"," %}
+                                <span class="badge bg-danger">{{ interest|strip }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if profile.website %}
+                    <div class="col-md-4">
+                        <small class="text-muted d-block"><i class="fas fa-globe"></i> Website</small>
+                        <a href="{{ profile.website }}" target="_blank" class="text-decoration-none">
+                            {{ profile.website|truncatewords:3 }}
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Stats -->
+            <div class="row text-center">
+                <div class="col-4">
+                    <h4 class="fw-bold">0</h4>
+                    <small class="text-muted">Sent Notes</small>
+                </div>
+                <div class="col-4">
+                    <h4 class="fw-bold">0</h4>
+                    <small class="text-muted">Received Notes</small>
+                </div>
+                <div class="col-4">
+                    <h4 class="fw-bold">0</h4>
+                    <small class="text-muted">Connections</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    {% if profile.bio or profile.location or profile.interests %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light border-0">
+                <h5 class="card-title mb-0 fw-bold">About</h5>
+            </div>
+            <div class="card-body">
+                {% if profile.bio %}
+                    <p>{{ profile.bio }}</p>
+                {% endif %}
+                
+                {% if profile.phone and request.user == profile_user %}
+                    <p><strong>Phone:</strong> {{ profile.phone }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

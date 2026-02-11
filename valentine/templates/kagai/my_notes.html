@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Love Notes - Kagai{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="fw-bold mb-4">
+        <i class="fas fa-envelope"></i> My Love Notes
+    </h1>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="received-tab" data-bs-toggle="tab" 
+                    data-bs-target="#received" type="button">
+                <i class="fas fa-inbox"></i> Received ({{ received_notes.count }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sent-tab" data-bs-toggle="tab" 
+                    data-bs-target="#sent" type="button">
+                <i class="fas fa-paper-plane"></i> Sent ({{ sent_notes.count }})
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Received Notes -->
+        <div class="tab-pane fade show active" id="received" role="tabpanel">
+            {% if received_notes %}
+                <div class="row g-3">
+                    {% for note in received_notes %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card note-card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="card-title fw-bold">
+                                        {{ note.title|default:"(No Title)" }}
+                                    </h6>
+                                    <p class="card-text small mb-2">
+                                        {% if note.is_anonymous %}
+                                            <i class="fas fa-mask"></i> Anonymous Admirer
+                                        {% else %}
+                                            From: <strong>{{ note.sender.username }}</strong>
+                                        {% endif %}
+                                    </p>
+                                    <p class="card-text text-muted small">
+                                        {{ note.content|truncatewords:20 }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock"></i> {{ note.created_at|timesince }} ago
+                                        </small>
+                                        {% if note.status == 'opened' %}
+                                            <span class="badge bg-success">Read</span>
+                                        {% else %}
+                                            <span class="badge bg-primary">New</span>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{% url 'kagai:view_note' note.id %}" class="btn btn-sm btn-danger mt-3 w-100">
+                                        Read Full Note
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-heart-broken"></i> No received notes yet. When someone sends you a love note, it will appear here!
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sent Notes -->
+        <div class="tab-pane fade" id="sent" role="tabpanel">
+            {% if sent_notes %}
+                <div class="row g-3">
+                    {% for note in sent_notes %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card note-card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="card-title fw-bold">
+                                        {{ note.title|default:"(No Title)" }}
+                                    </h6>
+                                    <p class="card-text small mb-2">
+                                        To: <strong>{{ note.recipient.username }}</strong>
+                                    </p>
+                                    <p class="card-text text-muted small">
+                                        {{ note.content|truncatewords:20 }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock"></i> {{ note.created_at|timesince }} ago
+                                        </small>
+                                        <span class="badge bg-{{ note.status|default:'secondary' }}">
+                                            {% if note.status == 'opened' %}
+                                                <i class="fas fa-check"></i> Read
+                                            {% elif note.status == 'sent' %}
+                                                <i class="fas fa-paper-plane"></i> Sent
+                                            {% else %}
+                                                {{ note.status }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <a href="{% url 'kagai:view_note' note.id %}" class="btn btn-sm btn-outline-danger mt-3 w-100">
+                                        View Note
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-envelope"></i> You haven't sent any notes yet. <a href="{% url 'kagai:browse_users' %}">Browse users</a> to send your first love note!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

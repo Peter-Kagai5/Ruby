@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Love Note - Kagai{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg note-display">
+                <div class="card-header bg-gradient text-white border-0">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h2 class="mb-1">{{ note.title|default:"A Love Note for You" }}</h2>
+                            {% if sender_profile %}
+                                <p class="mb-0">
+                                    <i class="fas fa-user"></i> From: 
+                                    <a href="{% url 'kagai:profile' note.sender.username %}" class="text-white">
+                                        {{ note.sender.first_name|default:note.sender.username }}
+                                    </a>
+                                </p>
+                            {% else %}
+                                <p class="mb-0"><i class="fas fa-mask"></i> From: Anonymous Admirer</p>
+                            {% endif %}
+                        </div>
+                        <small>{{ note.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-5">
+                    <div class="note-content mb-5">
+                        {{ note.content }}
+                    </div>
+
+                    <hr class="my-5">
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        {% if is_favorite %}
+                            <button class="btn btn-danger" onclick="toggleFavorite({{ note.id }})">
+                                <i class="fas fa-star"></i> Favorited
+                            </button>
+                        {% else %}
+                            <button class="btn btn-outline-danger" onclick="toggleFavorite({{ note.id }})">
+                                <i class="fas fa-star"></i> Add to Favorites
+                            </button>
+                        {% endif %}
+
+                        {% if sender_profile and request.user != note.sender %}
+                            <a href="{% url 'kagai:profile' note.sender.username %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-user"></i> View Profile
+                            </a>
+                            <a href="{% url 'kagai:send_note' note.sender.username %}" class="btn btn-outline-danger">
+                                <i class="fas fa-reply"></i> Reply
+                            </a>
+                        {% endif %}
+
+                        {% if request.user == note.sender or request.user == note.recipient %}
+                            <a href="{% url 'kagai:my_notes' %}" class="btn btn-outline-secondary ms-auto">
+                                Back to Notes
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Emoji Reactions -->
+                    <div class="mt-5">
+                        <div class="d-flex gap-2">
+                            <button class="emoji-btn" onclick="addReaction('❤️')">❤️</button>
+                            <button class="emoji-btn" onclick="addReaction('😍')">😍</button>
+                            <button class="emoji-btn" onclick="addReaction('✨')">✨</button>
+                            <button class="emoji-btn" onclick="addReaction('😊')">😊</button>
+                        </div>
+                        {% if note.emoji_reaction %}
+                            <p class="mt-2">Reaction: {{ note.emoji_reaction }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleFavorite(noteId) {
+    const btn = event.target.closest('button');
+    fetch(`/note/favorite/${noteId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{% csrf_token %}'
+        }
+    }).then(r => r.json()).then(data => {
+        if (data.favorited) {
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-danger');
+            btn.innerHTML = '<i class="fas fa-star"></i> Favorited';
+        } else {
+            btn.classList.remove('btn-danger');
+            btn.classList.add('btn-outline-danger');
+            btn.innerHTML = '<i class="fas fa-star"></i> Add to Favorites';
+        }
+    });
+}
+
+function addReaction(emoji) {
+    alert('Reaction added: ' + emoji);
+}
+</script>
+{% endblock %}
