@@ -56,7 +56,7 @@ def register(request):
             errors['terms'] = 'You must accept the terms and conditions'
         
         if errors:
-            return render(request, 'kagai/register.html', {'errors': errors})
+            return render(request, 'register.html', {'errors': errors})
         
         # Create user
         user = User.objects.create_user(
@@ -72,7 +72,7 @@ def register(request):
         messages.success(request, 'Account created successfully! Please login.')
         return redirect('kagai:login')
     
-    return render(request, 'kagai/register.html')
+    return render(request, 'register.html')
 
 
 def login_view(request):
@@ -96,7 +96,7 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid username or password')
     
-    return render(request, 'kagai/login.html')
+    return render(request, 'login.html')
 
 
 def logout_view(request):
@@ -135,7 +135,7 @@ def dashboard(request):
         'pending_requests': pending_requests,
         'recent_received': recent_received,
     }
-    return render(request, 'kagai/dashboard.html', context)
+    return render(request, 'dashboard.html', context)
 
 
 # ==================== Profile Views ====================
@@ -167,7 +167,7 @@ def profile(request, username):
         'is_friend': is_friend,
         'is_pending': is_pending,
     }
-    return render(request, 'kagai/profile.html', context)
+    return render(request, 'profile.html', context)
 
 
 @login_required(login_url='kagai:login')
@@ -201,7 +201,7 @@ def edit_profile(request):
     context = {
         'profile': profile,
     }
-    return render(request, 'kagai/edit_profile.html', context)
+    return render(request, 'edit_profile.html', context)
 
 
 # ==================== Love Notes Views ====================
@@ -240,7 +240,7 @@ def send_note(request, recipient_username):
     context = {
         'recipient': recipient,
     }
-    return render(request, 'kagai/send_note.html', context)
+    return render(request, 'send_note.html', context)
 
 
 @login_required(login_url='kagai:login')
@@ -267,7 +267,7 @@ def view_note(request, note_id):
         'sender_profile': sender_profile,
         'is_favorite': is_favorite,
     }
-    return render(request, 'kagai/view_note.html', context)
+    return render(request, 'view_note.html', context)
 
 
 @login_required(login_url='kagai:login')
@@ -280,7 +280,7 @@ def my_notes(request):
         'sent_notes': sent_notes,
         'received_notes': received_notes,
     }
-    return render(request, 'kagai/my_notes.html', context)
+    return render(request, 'my_notes.html', context)
 
 
 @login_required(login_url='kagai:login')
@@ -399,7 +399,7 @@ def browse_users(request):
         'gender': gender,
         'sort': sort,
     }
-    return render(request, 'kagai/browse_users.html', context)
+    return render(request, 'browse_users.html', context)
 
 
 def valentine_proposal(request):
