@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Love Proposal - Lucy{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-lg-6 text-white">
+                <h1 class="display-3 fw-bold mb-4">My Dearest Lucy</h1>
+                <p class="lead mb-4">I want to ask you the most important question of my life...</p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'kagai:valentine_proposal' %}" class="btn btn-danger btn-lg" style="background: linear-gradient(135deg, #ff1744 0%, #d01043 100%); border: none;">
+                        <i class="fas fa-heart"></i> Will You Be My Valentine?
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-illustration">
+                    <img src="{% static 'images/val_1.jpg' %}" alt="Lucy" style="width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

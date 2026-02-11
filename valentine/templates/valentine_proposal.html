@@ -1,0 +1,394 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}A Special Valentine Request for Lucy{% endblock %}
+
+{% block extra_css %}
+<style>
+    .valentine-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 50%, #FFE4E1 100%);
+        padding: 40px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .valentine-container::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('{% static "images/lucy.jpeg" %}');
+        background-size: cover;
+        background-attachment: fixed;
+        opacity: 0.15;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .valentine-container::after {
+        content: '';
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 500px;
+        height: 600px;
+        background-image: url('{% static "images/val_1.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.25;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .proposal-content {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .lucy-image-container {
+        margin: 40px auto;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(220, 53, 69, 0.3);
+        max-width: 400px;
+        animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    .lucy-image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        25% { transform: scale(1.05); }
+        50% { transform: scale(1.1); }
+        75% { transform: scale(1.05); }
+    }
+
+    .proposal-title {
+        font-size: 3.5rem;
+        color: #dc3545;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 30px 0;
+        letter-spacing: 2px;
+    }
+
+    .proposal-subtitle {
+        font-size: 1.8rem;
+        color: #c41d3b;
+        margin: 20px 0;
+        font-style: italic;
+    }
+
+    .hearts-decoration {
+        font-size: 2rem;
+        color: #dc3545;
+        margin: 10px 0;
+        letter-spacing: 15px;
+    }
+
+    .question-text {
+        font-size: 2rem;
+        color: #333;
+        font-weight: 600;
+        margin: 40px 0;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+    }
+
+    .buttons-container {
+        margin: 50px 0;
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-yes, .btn-no {
+        font-size: 1.3rem;
+        padding: 18px 50px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-yes {
+        background: linear-gradient(135deg, #dc3545 0%, #c41d3b 100%);
+        color: white;
+    }
+
+    .btn-yes:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+        color: white;
+    }
+
+    .btn-no {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+    }
+
+    .btn-no:hover {
+        transform: translateX(150px);
+        box-shadow: 0 10px 30px rgba(108, 117, 125, 0.4);
+    }
+
+    .response-message {
+        display: none;
+        background: white;
+        border-radius: 20px;
+        padding: 50px 40px;
+        margin: 40px 0;
+        box-shadow: 0 15px 40px rgba(220, 53, 69, 0.2);
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    .response-message.show {
+        display: block;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .response-title {
+        font-size: 2.5rem;
+        color: #dc3545;
+        margin-bottom: 25px;
+        font-weight: bold;
+    }
+
+    .love-paragraph {
+        font-size: 1.2rem;
+        color: #333;
+        line-height: 2;
+        text-align: left;
+        font-style: italic;
+        margin: 20px 0;
+        color: #555;
+    }
+
+    .love-paragraph::first-line {
+        font-weight: bold;
+    }
+
+    .emoji-celebration {
+        font-size: 3rem;
+        margin: 20px 0;
+        animation: bounce 1s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .confetti {
+        position: fixed;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    .success-feedback {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .heart-icon {
+        color: #dc3545;
+        font-size: 1.5rem;
+        margin: 0 5px;
+        animation: heartRun 0.6s ease-in-out infinite;
+    }
+
+    @keyframes heartRun {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+    }
+
+    .divider-line {
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #dc3545, transparent);
+        margin: 30px 0;
+        border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+        .proposal-title {
+            font-size: 2.5rem;
+        }
+
+        .proposal-subtitle {
+            font-size: 1.3rem;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+        }
+
+        .btn-yes, .btn-no {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+        }
+
+        .response-message {
+            padding: 30px 20px;
+        }
+
+        .love-paragraph {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="valentine-container">
+    <div class="proposal-content">
+        <!-- Title Section -->
+        <div class="hearts-decoration">💕 💕 💕</div>
+        <h1 class="proposal-title">Will You Be My Valentine?</h1>
+        <p class="proposal-subtitle">A Special Moment for Lucy</p>
+        <div class="divider-line"></div>
+
+        <!-- Lucy's Image -->
+        {% if lucy_image %}
+        <div class="lucy-image-container">
+            <img src="{% static 'images/becky.jpeg' %}" alt="Lucy" />
+        </div>
+        {% endif %}
+
+        <!-- Question -->
+        <p class="question-text">Lucy, will you be my Valentine? 💗</p>
+
+        <!-- Buttons -->
+        <div class="buttons-container">
+            <button class="btn-yes" onclick="showResponse()">YES! 💕</button>
+            <button class="btn-no" onclick="runAwayButton()">NO</button>
+        </div>
+
+        <!-- Response Message -->
+        <div class="response-message" id="responseMessage">
+            <div class="emoji-celebration">🎉 ❤️ 🎉</div>
+            <h2 class="response-title">You've Made Me the Happiest! 💕</h2>
+            <div class="divider-line"></div>
+
+            <p class="love-paragraph">
+                <span class="heart-icon">❤️</span>
+                My dearest Lucy, from the moment I met you, my heart knew it had found its home. 
+                Your smile brightens even my darkest days, and your presence fills my soul with a warmth 
+                I never knew existed. I am eternally grateful for the love and joy you bring into my life every single day.
+            </p>
+
+            <p class="love-paragraph">
+                <span class="heart-icon">💕</span>
+                I cherish every moment we spend together, from the sweetest whispers to the grandest gestures. 
+                Your kindness, your strength, and your beautiful spirit inspire me to be a better person. 
+                With you by my side, I feel like I can conquer the world, knowing that our love is the greatest 
+                treasure I could ever possess in this lifetime.
+            </p>
+
+            <p class="love-paragraph">
+                <span class="heart-icon">🌹</span>
+                You are my Valentine, not just today, but for every day that follows. I promise to love you 
+                unconditionally, to support your dreams, and to stand beside you through all of life's adventures. 
+                Thank you for saying yes, for choosing me, and for making me believe in the magic of true love.
+            </p>
+
+            <p class="love-paragraph">
+                <span class="heart-icon">✨</span>
+                Forever yours, with an overflowing heart and infinite love, I am completely and utterly devoted to you. 
+                You are my greatest blessing, my sweetest dream come true, and the reason my heart beats with such 
+                passionate intensity. I love you more than words could ever express, today and always.
+            </p>
+
+            <p class="love-paragraph">
+                <span class="heart-icon">💖</span>
+                Happy Valentine's Day to the most amazing, beautiful, and incredible woman in the world. 
+                You complete me in ways I never thought possible, and I cannot wait to spend the rest of my life 
+                creating beautiful memories with you. I love you, Lucy. Forever and always, with all my heart. 💕
+            </p>
+
+            <div class="success-feedback">
+                <div style="font-size: 3rem; margin: 20px 0;">💑 ❤️ 💑</div>
+                <p style="font-size: 1.3rem; color: #dc3545; font-weight: bold;">Our Love Story Begins Here... 🌹</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showResponse() {
+        document.getElementById('responseMessage').classList.add('show');
+        triggerConfetti();
+        // Smooth scroll to message
+        setTimeout(() => {
+            document.getElementById('responseMessage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+
+    function runAwayButton() {
+        const btn = event.target;
+        const randomX = Math.random() * 200 - 100;
+        const randomY = Math.random() * 200 - 100;
+        btn.style.position = 'relative';
+        btn.style.left = randomX + 'px';
+        btn.style.top = randomY + 'px';
+        btn.style.transition = 'all 0.3s ease';
+    }
+
+    function triggerConfetti() {
+        // Create confetti pieces
+        for (let i = 0; i < 50; i++) {
+            createConfetti();
+        }
+    }
+
+    function createConfetti() {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.innerHTML = ['❤️', '💕', '💖', '✨', '🎉', '🌹'][Math.floor(Math.random() * 6)];
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = '-10px';
+        confetti.style.fontSize = Math.random() * 30 + 20 + 'px';
+        confetti.style.opacity = 1;
+        document.body.appendChild(confetti);
+
+        let top = 0;
+        const speed = Math.random() * 3 + 2;
+        const sway = Math.random() * 2 - 1;
+
+        const fall = setInterval(() => {
+            top += speed;
+            confetti.style.top = top + 'px';
+            confetti.style.left = (parseFloat(confetti.style.left) + sway) + 'px';
+            confetti.style.opacity = 1 - (top / window.innerHeight);
+
+            if (top > window.innerHeight) {
+                clearInterval(fall);
+                confetti.remove();
+            }
+        }, 10);
+    }
+</script>
+{% endblock %}

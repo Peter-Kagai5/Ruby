@@ -22,7 +22,7 @@ def home(request):
         'total_notes': LoveNote.objects.filter(status='sent').count(),
         'total_users': User.objects.count(),
     }
-    return render(request, 'kagai/home.html', context)
+    return render(request, 'home.html', context)
 
 
 def register(request):
@@ -407,4 +407,4 @@ def valentine_proposal(request):
     context = {
         'lucy_image': True,
     }
-    return render(request, 'kagai/valentine_proposal.html', context)
+    return render(request, 'valentine_proposal.html', context)
